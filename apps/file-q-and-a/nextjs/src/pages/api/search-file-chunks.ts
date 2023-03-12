@@ -1,3 +1,5 @@
+import { collectionChroma } from "@/services/chromaClient";
+import { flatten } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { searchFileChunks } from "../../services/searchFileChunks";
@@ -32,10 +34,10 @@ export default async function handler(
       return;
     }
 
-    if (!Array.isArray(files) || files.length === 0) {
-      res.status(400).json({ error: "files must be a non-empty array" });
-      return;
-    }
+    // if (!Array.isArray(files) || files.length === 0) {
+    //   res.status(400).json({ error: "files must be a non-empty array" });
+    //   return;
+    // }
 
     if (!maxResults || maxResults < 1) {
       res
@@ -44,13 +46,37 @@ export default async function handler(
       return;
     }
 
-    const searchResults = await searchFileChunks({
-      searchQuery,
-      files,
-      maxResults,
-    });
+    const fileChunk =  {
+      filename: '',
+      text: ''
+    } as FileChunk
 
-    res.status(200).json({ searchResults });
+    const collection = await collectionChroma()
+
+    const result = await collection.query(
+      undefined, // query_embeddings
+      1, // n_results
+      undefined, // where
+      [searchQuery], // query_text
+    ).then( (value) => {
+      // console.log({value: JSON.stringify(value, undefined)})
+      
+      console.log(value)
+
+      return value?.['documents'].map( (array: any) => ({
+        text: flatten(array)
+      }))
+    })
+
+    console.log({result})
+
+    // const searchResults = await searchFileChunks({
+    //   searchQuery,
+    //   files,
+    //   maxResults,
+    // });
+
+    res.status(200).json({ searchResults: result });
   } catch (error) {
     console.error(error);
 

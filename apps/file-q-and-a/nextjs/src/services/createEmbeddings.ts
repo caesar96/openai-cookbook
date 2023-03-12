@@ -27,18 +27,19 @@ export async function createEmbeddings({
       };
     }
 
-    // If there are multiple embeddings, calculate their average
-    const embeddingLength = textEmbeddings[0].embedding.length;
-    const meanEmbedding = [];
-    for (let i = 0; i < embeddingLength; i++) {
-      // Sum up the values at the same index of each embedding
-      let sum = 0;
-      for (const textEmbedding of textEmbeddings) {
-        sum += textEmbedding.embedding[i];
-      }
-      // Divide by the number of embeddings to get the mean
-      meanEmbedding.push(sum / textEmbeddings.length);
-    }
+    let meanEmbedding: any = [];
+    // // If there are multiple embeddings, calculate their average
+    // const embeddingLength = textEmbeddings[0].embedding.length;
+    // const meanEmbedding = [];
+    // for (let i = 0; i < embeddingLength; i++) {
+    //   // Sum up the values at the same index of each embedding
+    //   let sum = 0;
+    //   for (const textEmbedding of textEmbeddings) {
+    //     sum += textEmbedding.embedding[i];
+    //   }
+    //   // Divide by the number of embeddings to get the mean
+    //   meanEmbedding.push(sum / textEmbeddings.length);
+    // }
 
     return {
       meanEmbedding,

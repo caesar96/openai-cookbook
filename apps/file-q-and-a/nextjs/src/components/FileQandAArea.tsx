@@ -48,7 +48,7 @@ function FileQandAArea(props: FileQandAAreaProps) {
         "/api/search-file-chunks",
         {
           searchQuery: question,
-          files: props.files,
+          // files: props.files,
           maxResults: 10,
         }
       );
@@ -78,6 +78,8 @@ function FileQandAArea(props: FileQandAAreaProps) {
 
     while (true) {
       const { done, value } = await reader.read();
+
+      console.log({value})
       if (done) {
         setAnswerDone(true);
         break;

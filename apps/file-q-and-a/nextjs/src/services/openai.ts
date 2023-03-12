@@ -3,6 +3,7 @@ import {
   Configuration,
   CreateCompletionRequest,
   CreateCompletionResponse,
+  CreateChatCompletionResponse,
   OpenAIApi,
 } from "openai";
 
@@ -18,8 +19,10 @@ const configuration = new Configuration({
 export const openai = new OpenAIApi(configuration);
 
 type CompletionOptions = Partial<CreateCompletionRequest> & {
-  prompt: string;
+  prompt?: string;
+  context: string;
   fallback?: string;
+  question: string;
 };
 
 type EmbeddingOptions = {
@@ -55,20 +58,32 @@ export async function completion({
 }
 
 export async function* completionStream({
-  prompt,
+  question,
+  context,
   fallback,
-  max_tokens = 800,
-  temperature = 0,
-  model = "text-davinci-003",
+  max_tokens = 1000,
+  temperature = 0.2,
+  model = "gpt-3.5-turbo",
 }: CompletionOptions) {
   try {
-    const result = await openai.createCompletion(
+    const result = await openai.createChatCompletion(
       {
-        prompt,
-        max_tokens,
+        
+        max_tokens: max_tokens as number,
+        messages: [
+          {
+            role: 'system',
+            content: context
+          },
+          {
+            role: 'user',
+            content: question
+          }
+        ],
         temperature,
         model,
         stream: true,
+        
       },
       { responseType: "stream" }
     );
@@ -79,13 +94,19 @@ export async function* completionStream({
       const line = chunk.toString().trim();
       const message = line.split("data: ")[1];
 
+      // console.log({line})
+
       if (message === "[DONE]") {
         break;
       }
 
-      const data = JSON.parse(message) as CreateCompletionResponse;
+      // console.log({message})
 
-      yield data.choices[0].text;
+      const data = JSON.parse(message)
+
+      const mensaje = data.choices?.[0]?.delta?.content as string ?? ""
+      // console.log({mensaje})
+      yield mensaje
     }
   } catch (error) {
     if (fallback) yield fallback;
