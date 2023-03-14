@@ -37,19 +37,19 @@ export async function getEmbeddingsForText({
     const encoded = encode( text);
     console.log('Encoded this string looks like: ', encoded.length)
 
-    lineas.push(...text.split(/\n/g)?.filter( n => !!n))
+  //   lineas.push(...text.split(/\n/g)?.filter( n => !!n))
 
-    const collection = await collectionChroma()
+  //   const collection = await collectionChroma()
 
 
-    collection.add(
-      lineas.map( () => fecha.getTime().toString()),
-      undefined,
-      lineas.map( () => ({
-        "createdAt":  fecha.getTime().toString()
-      })), 
-      lineas, 
-  )
+  //   collection.add(
+  //     lineas.map( () => fecha.getTime().toString()),
+  //     undefined,
+  //     lineas.map( () => ({
+  //       "createdAt":  fecha.getTime().toString()
+  //     })), 
+  //     lineas, 
+  // )
 
     const batchPromises = batches.map((batch) => '' as any);
 
