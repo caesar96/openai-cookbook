@@ -9,9 +9,9 @@ export const collectionChroma = (async () => {
     
     try {
         // await chromeClient.reset()
-        return await chromeClient.createCollection("multiverso_diademuertos", {}, embedder)
+        return await chromeClient.createCollection("multiverso_gigante", {}, embedder)
     } catch (error) {
-        return await chromeClient.getCollection("multiverso_diademuertos", embedder)
+        return await chromeClient.getCollection("multiverso_gigante", embedder)
     }
     
     
